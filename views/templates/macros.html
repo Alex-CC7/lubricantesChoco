@@ -1,0 +1,21 @@
+{# Macro: barra de búsqueda + contador. Uso: {{ buscador('tabla_id') }} #}
+{% macro buscador(tabla_id, placeholder='Buscar...') %}
+<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+  <div class="search-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input type="text"
+           class="search-input"
+           id="buscar_{{ tabla_id }}"
+           placeholder="{{ placeholder }}"
+           oninput="filtrarTabla('{{ tabla_id }}', this.value)"
+           autocomplete="off">
+    <button class="search-clear"
+            id="clear_{{ tabla_id }}"
+            onclick="limpiarBusqueda('{{ tabla_id }}')"
+            title="Limpiar">
+      <i class="bi bi-x-circle-fill"></i>
+    </button>
+  </div>
+  <span class="search-count" id="count_{{ tabla_id }}"></span>
+</div>
+{% endmacro %}

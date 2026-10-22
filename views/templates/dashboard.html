@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — BD Taller{% endblock %}
+{% block page_title %}<i class="bi bi-speedometer2"></i> Dashboard{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+
+  <div class="dash-card flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="dc-icon"><i class="bi bi-tags"></i></div>
+        <div class="dc-label">Categorías</div>
+        <div class="dc-value">{{ total_categorias }}</div>
+        <!-- Espacio para tu imagen -->
+        <img src="{{ url_for('static', filename='img/categorias.png') }}" class="dc-img" alt="Categorías" onerror="this.style.display='none'">
+      </div>
+      <div class="flip-card-back">
+        <div class="dc-back-title">Categorías</div>
+        <p class="dc-back-text">Gestiona los rubros y clasificaciones de tus productos registrados en el sistema.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="dc-icon"><i class="bi bi-people"></i></div>
+        <div class="dc-label">Clientes</div>
+        <div class="dc-value">{{ total_clientes }}</div>
+        <img src="{{ url_for('static', filename='img/clientes.png') }}" class="dc-img" alt="Clientes" onerror="this.style.display='none'">
+      </div>
+      <div class="flip-card-back">
+        <div class="dc-back-title">Clientes</div>
+        <p class="dc-back-text">Administra la información de contacto y el historial de tus clientes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="dc-icon"><i class="bi bi-box-seam"></i></div>
+        <div class="dc-label">Productos</div>
+        <div class="dc-value">{{ total_productos }}</div>
+        <img src="{{ url_for('static', filename='img/productos.png') }}" class="dc-img" alt="Productos" onerror="this.style.display='none'">
+      </div>
+      <div class="flip-card-back">
+        <div class="dc-back-title">Productos</div>
+        <p class="dc-back-text">Controla tu inventario, precios y stock disponible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="dc-icon"><i class="bi bi-receipt"></i></div>
+        <div class="dc-label">Ventas</div>
+        <div class="dc-value">{{ total_ventas }}</div>
+        <img src="{{ url_for('static', filename='img/ventas.png') }}" class="dc-img" alt="Ventas" onerror="this.style.display='none'">
+      </div>
+      <div class="flip-card-back">
+        <div class="dc-back-title">Ventas</div>
+        <p class="dc-back-text">Revisa el registro completo de transacciones realizadas.</p>
+      </div>
+    </div>
+  </div>
+
+  {% if session.get('rol') == '1' %}
+  <div class="dash-card flip-card" onclick="this.classList.toggle('flipped')">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <div class="dc-icon"><i class="bi bi-person-gear"></i></div>
+        <div class="dc-label">Usuarios</div>
+        <div class="dc-value">{{ total_usuarios }}</div>
+        <img src="{{ url_for('static', filename='img/usuarios.png') }}" class="dc-img" alt="Usuarios" onerror="this.style.display='none'">
+      </div>
+      <div class="flip-card-back">
+        <div class="dc-back-title">Usuarios</div>
+        <p class="dc-back-text">Administra las cuentas y permisos del personal del taller.</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-receipt"></i> Últimas Ventas</div>
+  <div class="p-3">
+    <table class="table-taller">
+      <thead>
+        <tr>
+          <th>Nº Venta</th><th>Fecha</th><th>Total</th><th>Tipo</th><th>Vendedor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i, v in ventas_recientes %}
+        <tr>
+          <td class="num">{{ i }}</td>
+         
+          <td>{{ v.FechaVenta }}</td>
+          <td>Bs {{ v.TotalPagar }}</td>
+          <td>{{ 'Contado' if v.TipoVenta == 1 else 'QR' }}</td>
+          <td>{{ v.Usuario }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-3">Sin ventas registradas</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.flip-card {
+  background: transparent;
+  perspective: 1000px;
+  cursor: pointer;
+  padding: 0 !important;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.flip-card-front {
+  background: inherit;
+}
+
+.flip-card-back {
+  background: #2c3e50;
+  color: #fff;
+  transform: rotateY(180deg);
+  text-align: center;
+}
+
+.dc-img {
+  max-width: 60px;
+  max-height: 60px;
+  margin-top: 0.5rem;
+  object-fit: contain;
+}
+
+.dc-back-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.dc-back-text {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 0;
+}
+</style>
+{% endblock %}

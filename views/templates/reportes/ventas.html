@@ -1,0 +1,87 @@
+{% from 'macros.html' import buscador %}
+{% extends 'base.html' %}
+{% block title %}Reporte de Ventas{% endblock %}
+{% block page_title %}<i class="bi bi-bar-chart"></i> Reporte de Ventas{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2><i class="bi bi-receipt"></i> Reporte de Ventas</h2>
+  <div style="display:flex;gap:.5rem">
+    <a href="{{ url_for('reportes.excel_ventas', fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}"
+       class="btn-taller btn-excel-t"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+    <a href="{{ url_for('reportes.pdf_ventas', fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}"
+       class="btn-taller btn-pdf-t"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+  </div>
+</div>
+
+<!-- Filtro BETWEEN -->
+<div class="filtro-card">
+  <form method="GET" style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;width:100%">
+    <div class="ft-group">
+      <label class="ft-label"><i class="bi bi-calendar-range"></i> Desde</label>
+      <input type="date" name="fecha_inicio" class="ft-input" value="{{ fecha_inicio or '' }}" style="width:180px">
+    </div>
+    <div class="ft-group">
+      <label class="ft-label"><i class="bi bi-calendar-range"></i> Hasta</label>
+      <input type="date" name="fecha_fin" class="ft-input" value="{{ fecha_fin or '' }}" style="width:180px">
+    </div>
+    <div class="ft-group" style="margin-bottom:0">
+      <button type="submit" class="btn-taller btn-primary-t btn-xl">
+        <i class="bi bi-search"></i> Filtrar
+      </button>
+    </div>
+    {% if fecha_inicio or fecha_fin %}
+    <div class="ft-group" style="margin-bottom:0">
+      <a href="{{ url_for('reportes.reporte_ventas') }}" class="btn-taller btn-secondary-t btn-xl">
+        <i class="bi bi-x"></i> Limpiar
+      </a>
+    </div>
+    {% endif %}
+  </form>
+</div>
+
+{% if fecha_inicio and fecha_fin %}
+<div class="alert-taller alert-info">
+  <i class="bi bi-info-circle-fill"></i>
+  Ventas entre <strong>{{ fecha_inicio }}</strong> y <strong>{{ fecha_fin }}</strong>
+  — <strong>{{ ventas | length }}</strong> resultado(s)
+</div>
+{% endif %}
+
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-list-ul"></i> Resultados — {{ ventas | length }} venta(s)</div>
+  <div style="padding:1rem 1.2rem .5rem">
+    {{ buscador('tbl_rpt_ventas', 'Buscar en resultados...') }}
+  </div>
+  <div style="padding:0 1rem 1rem;overflow-x:auto">
+    <table class="table-taller" id="tbl_rpt_ventas">
+      <thead>
+        <tr><th>N° Venta</th><th>Fecha</th><th>Cliente</th>
+            <th>Total (Bs)</th><th>Descuento (Bs)</th><th>Tipo</th><th>Vendedor</th><th>PDF</th></tr>
+      </thead>
+      <tbody>
+        {% for i, v in ventas | enumerate(1) | list %}
+        <tr>
+          <td class="num">{{ i }}</td>        
+          <td>{{ v.FechaVenta }}</td>
+          <td>{{ v.Cliente }}</td>
+          <td>Bs {{ v.TotalPagar }}</td>
+          <td>Bs {{ v.Descuento }}</td>
+          <td>{{ 'Contado' if v.TipoVenta == 1 else 'Crédito' }}</td>
+          <td>{{ v.Usuario }}</td>
+          <td>
+            <a href="{{ url_for('ventas.imprimir_pdf', id=v.idVenta) }}"
+               class="btn-taller btn-pdf-t" target="_blank" style="padding:.35rem .7rem">
+              <i class="bi bi-file-pdf"></i>
+            </a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" style="text-align:center;padding:2rem;color:#94a3b8">
+          Sin resultados{% if fecha_inicio %} para el rango seleccionado{% endif %}
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

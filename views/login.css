@@ -1,0 +1,214 @@
+/* ============================================================
+   BD TALLER — Login: panel metálico remachado, estilo placa de taller
+   Reemplaza cualquier regla previa de .login-wrapper / .login-card
+   en style.css, o pegalo al final del archivo.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --taller-bg: #1b1d21;
+  --taller-panel: #24272c;
+  --taller-panel-edge: #2c2f35;
+  --taller-amber: #e8a33d;
+  --taller-amber-dim: #a97527;
+  --taller-text: #eceef0;
+  --taller-text-muted: #8b9098;
+  --taller-line: #3a3e44;
+  --taller-danger: #d9534f;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--taller-bg);
+  background-image:
+    linear-gradient(var(--taller-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--taller-line) 1px, transparent 1px);
+  background-size: 42px 42px;
+  background-position: center;
+  font-family: 'Inter', sans-serif;
+  color: var(--taller-text);
+}
+
+.login-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: var(--taller-panel);
+  border: 1px solid var(--taller-panel-edge);
+  border-radius: 4px;
+  padding: 44px 36px 36px;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Remaches en las esquinas del panel */
+.login-card::before,
+.login-card::after,
+.login-logo::before,
+.login-logo::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #4a4e55, #141517);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+.login-card::before { top: 14px; left: 14px; }
+.login-card::after   { top: 14px; right: 14px; }
+.login-card .login-logo::before { bottom: -20px; left: -22px; }
+.login-card .login-logo::after  { bottom: -20px; right: -22px; }
+
+/* Indicador ámbar tipo lámpara de trabajo — el único acento fuerte */
+.login-card {
+  border-top: 3px solid var(--taller-amber);
+}
+
+.login-logo {
+  position: relative;
+  text-align: left;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--taller-line);
+}
+
+.login-logo i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 3px;
+  background: var(--taller-bg);
+  border: 1px solid var(--taller-line);
+  color: var(--taller-amber);
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+
+.login-logo h1 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+  color: var(--taller-text);
+}
+
+.login-logo p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--taller-text-muted);
+}
+
+.form-taller .form-group {
+  margin-bottom: 20px;
+}
+
+.form-taller .form-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--taller-text-muted);
+  margin-bottom: 8px;
+}
+
+.form-taller .form-label i {
+  color: var(--taller-amber-dim);
+  font-size: 13px;
+}
+
+.form-taller .form-control {
+  width: 100%;
+  background: var(--taller-bg);
+  border: 1px solid var(--taller-line);
+  border-radius: 3px;
+  padding: 11px 14px;
+  color: var(--taller-text);
+  font-size: 14.5px;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.form-taller .form-control::placeholder {
+  color: #5c6067;
+}
+
+.form-taller .form-control:focus {
+  outline: none;
+  border-color: var(--taller-amber);
+  box-shadow: 0 0 0 3px rgba(232, 163, 61, 0.15);
+}
+
+.btn-taller {
+  border: none;
+  border-radius: 3px;
+  padding: 12px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn-primary-t {
+  background: var(--taller-amber);
+  color: #1b1d21;
+}
+
+.btn-primary-t:hover {
+  background: #f0ad55;
+}
+
+.btn-primary-t:active {
+  transform: translateY(1px);
+}
+
+.alert-taller {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 3px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  border-left: 3px solid var(--taller-danger);
+  background: rgba(217, 83, 79, 0.1);
+  color: #f0b7b5;
+}
+
+.alert-taller.alert-success {
+  border-left-color: #4caf7d;
+  background: rgba(76, 175, 125, 0.1);
+  color: #a9e0c5;
+}
+
+/* Accesibilidad: foco visible con teclado */
+.form-control:focus-visible,
+.btn-taller:focus-visible {
+  outline: 2px solid var(--taller-amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

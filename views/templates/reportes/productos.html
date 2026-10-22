@@ -1,0 +1,41 @@
+{% from 'macros.html' import buscador %}
+{% extends 'base.html' %}
+{% block title %}Reporte de Productos{% endblock %}
+{% block page_title %}<i class="bi bi-clipboard-data"></i> Reporte de Productos{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2><i class="bi bi-box-seam"></i> Reporte de Productos</h2>
+  <div style="display:flex;gap:.5rem">
+    <a href="{{ url_for('reportes.excel_productos') }}" class="btn-taller btn-excel-t"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+    <a href="{{ url_for('reportes.pdf_productos') }}"   class="btn-taller btn-pdf-t"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+  </div>
+</div>
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-list-ul"></i> Productos ({{ productos | length }})</div>
+  <div style="padding:1rem 1.2rem .5rem">
+    {{ buscador('tbl_rpt_productos', 'Buscar producto, marca, categoría...') }}
+  </div>
+  <div style="padding:0 1rem 1rem;overflow-x:auto">
+    <table class="table-taller" id="tbl_rpt_productos">
+      <thead>
+        <tr><th>Nº</th><th>Nombre</th><th>Marca</th><th>Stock</th><th>Precio</th><th>Proveedor</th><th>Categoría</th></tr>
+      </thead>
+      <tbody>
+        {% for i, p in productos | enumerate(1) | list %}
+        <tr>
+          <td class="num">{{ i }}</td>
+          <td>{{ p.Nombre }}</td>
+          <td>{{ p.Marca }}</td>
+          <td>{{ p.Stock }}</td>
+          <td>Bs {{ p.PrecioVenta }}</td>
+          <td>{{ p.NombreProveedor }}</td>
+          <td>{{ p.Categoria }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;padding:1.5rem;color:#94a3b8">Sin productos</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

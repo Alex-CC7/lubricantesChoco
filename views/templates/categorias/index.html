@@ -1,0 +1,41 @@
+{% from 'macros.html' import buscador %}
+{% extends 'base.html' %}
+{% block title %}Categorías{% endblock %}
+{% block page_title %}<i class="bi bi-tags"></i> Categorías{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2><i class="bi bi-tags"></i> Categorías</h2>
+  <div style="display:flex;gap:.5rem">
+    <a href="{{ url_for('reportes.excel_categorias') }}" class="btn-taller btn-excel-t"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+    <a href="{{ url_for('reportes.pdf_categorias') }}"   class="btn-taller btn-pdf-t"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+    <a href="{{ url_for('categorias.crear') }}"          class="btn-taller btn-primary-t"><i class="bi bi-plus-circle"></i> Nueva</a>
+  </div>
+</div>
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-list-ul"></i> Listado de Categorías</div>
+  <div style="padding:1rem 1.2rem .5rem">
+    {{ buscador('tbl_categorias', 'Buscar categoría...') }}
+  </div>
+  <div style="padding:0 1rem 1rem;overflow-x:auto">
+    <table class="table-taller" id="tbl_categorias">
+      <thead><tr><th>Nº Venta</th><th>Nombre</th><th>Descripción</th><th>Últ. actualización</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for i, c in categorias | enumerate(1) | list %}
+        <tr>
+          <td class="num">{{ i }}</td>
+          <td>{{ c.Nombre }}</td>
+          <td>{{ c.Descripcion }}</td>
+          <td>{{ c.FechaActualizacion }}</td>
+          <td><div class="acciones-fila">
+            <a href="{{ url_for('categorias.editar', id=c.idCategoria) }}" class="btn-taller btn-warning-t"><i class="bi bi-pencil"></i> Editar</a>
+            <a href="{{ url_for('categorias.eliminar', id=c.idCategoria) }}" class="btn-taller btn-danger-t" onclick="return confirm('¿Eliminar?')"><i class="bi bi-trash"></i> Eliminar</a>
+          </div></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;padding:1.5rem;color:#94a3b8">Sin categorías registradas</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

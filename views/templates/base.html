@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BD Taller{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <i class="bi bi-tools"></i> BD Taller
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+    <div class="nav-section">Gestión</div>
+    <a href="{{ url_for('categorias.index') }}" class="{{ 'active' if 'categorias' in request.endpoint }}">
+      <i class="bi bi-tags"></i> Categorías
+    </a>
+    <a href="{{ url_for('clientes.index') }}" class="{{ 'active' if 'clientes' in request.endpoint }}">
+      <i class="bi bi-people"></i> Clientes
+    </a>
+    <a href="{{ url_for('productos.index') }}" class="{{ 'active' if 'productos' in request.endpoint }}">
+      <i class="bi bi-box-seam"></i> Productos
+    </a>
+    <a href="{{ url_for('ventas.index') }}" class="{{ 'active' if 'ventas' in request.endpoint }}">
+      <i class="bi bi-receipt"></i> Ventas
+    </a>
+    {% if session.get('rol') == '1' %}
+    <div class="nav-section">Admin</div>
+    <a href="{{ url_for('usuarios.index') }}" class="{{ 'active' if 'usuarios' in request.endpoint }}">
+      <i class="bi bi-person-gear"></i> Usuarios
+    </a>
+    {% endif %}
+    <div class="nav-section">Reportes</div>
+    <a href="{{ url_for('reportes.reporte_ventas') }}" class="{{ 'active' if request.endpoint == 'reportes.reporte_ventas' }}">
+      <i class="bi bi-bar-chart"></i> Ventas
+    </a>
+    <a href="{{ url_for('reportes.reporte_productos') }}" class="{{ 'active' if request.endpoint == 'reportes.reporte_productos' }}">
+      <i class="bi bi-clipboard-data"></i> Productos
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <i class="bi bi-person-circle"></i> {{ session.get('nombre', '') }}
+    &nbsp;·&nbsp;
+    <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Salir</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+  <header class="topbar">
+    <span class="topbar-title">{% block page_title %}{% endblock %}</span>
+    <span class="topbar-user">
+      <i class="bi bi-person-circle"></i> {{ session.get('nombre') }}
+      &nbsp;<span class="badge bg-primary">{{ 'Admin' if session.get('rol') == '1' else 'Personal' }}</span>
+    </span>
+  </header>
+
+  <div class="content-area">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert-taller alert-{{ category }}">
+          <i class="bi bi-info-circle-fill"></i> {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<!-- Buscador global de tablas -->
+<script>
+function filtrarTabla(tablaId, texto) {
+  const tabla  = document.getElementById(tablaId);
+  const filas  = tabla.querySelectorAll('tbody tr');
+  const q      = texto.trim().toLowerCase();
+  const btn    = document.getElementById('clear_' + tablaId);
+  const count  = document.getElementById('count_' + tablaId);
+  let visibles = 0;
+
+  filas.forEach(tr => {
+    const hayMatch = tr.textContent.toLowerCase().includes(q);
+    tr.classList.toggle('search-hidden', !hayMatch);
+    if (hayMatch) visibles++;
+  });
+
+  btn.style.display  = q ? 'block' : 'none';
+  count.textContent  = q ? `${visibles} resultado(s)` : '';
+}
+
+function limpiarBusqueda(tablaId) {
+  const inp = document.getElementById('buscar_' + tablaId);
+  inp.value = '';
+  filtrarTabla(tablaId, '');
+  inp.focus();
+}
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

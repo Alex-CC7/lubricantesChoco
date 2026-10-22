@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BD Taller - Iniciar sesión</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+  <form class="login-card" method="POST" action="{{ url_for('auth.login') }}">
+
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path>
+      </svg>
+    </div>
+
+    <h1 class="title">BD Taller</h1>
+    <p class="subtitle">Sistema de Gestión</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="login-alerts">
+          {% for category, message in messages %}
+            {% if bloqueado_segundos and bloqueado_segundos > 0 and category == 'danger' and ('bloqueada' in message or 'dispositivo' in message) %}
+              <div class="login-alert login-alert-danger">
+                Demasiados intentos fallidos. Intenta de nuevo en
+                <span id="countdown">{{ bloqueado_segundos }}</span>.
+              </div>
+            {% else %}
+              <div class="login-alert login-alert-{{ category }}">{{ message }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="field">
+      <div class="field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path>
+        </svg>
+        Usuario
+      </div>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"></path>
+          </svg>
+        </span>
+        <input type="text" name="username" placeholder="Nombre de usuario" autocomplete="username" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+        Contraseña
+      </div>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+        </span>
+        <input id="pwd" type="password" name="password" placeholder="Contraseña" autocomplete="current-password" required>
+        <button type="button" class="toggle-eye" onclick="togglePwd()" aria-label="Mostrar/ocultar contraseña">
+          <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path id="eyePath" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+            <circle id="eyePupil" cx="12" cy="12" r="3"></circle>
+            <line id="eyeSlash" x1="3" y1="21" x2="21" y2="3" style="display:none"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-login" id="btnLogin">
+      <span class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12h12"></path>
+          <path d="M15 6l6 6-6 6"></path>
+          <path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"></path>
+        </svg>
+      </span>
+      <span id="btnLoginText">Ingresar</span>
+    </button>
+
+    <div class="divider">o</div>
+
+    <a href="{{ url_for('auth.recuperar') }}" class="forgot">
+      <span class="icon-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+      </span>
+      ¿Olvidaste tu contraseña?
+    </a>
+  </form>
+
+  <script>
+    function togglePwd(){
+      const input = document.getElementById('pwd');
+      const slash = document.getElementById('eyeSlash');
+      const isPwd = input.type === 'password';
+      input.type = isPwd ? 'text' : 'password';
+      slash.style.display = isPwd ? 'none' : 'block';
+    }
+
+    // Contador en vivo del bloqueo por intentos fallidos
+    let segundosRestantes = {{ bloqueado_segundos|default(0) }};
+
+    function formatoTiempo(totalSegundos){
+      const min = Math.floor(totalSegundos / 60);
+      const seg = totalSegundos % 60;
+      if (min > 0) {
+        return min + ' min ' + seg + ' seg';
+      }
+      return seg + ' seg';
+    }
+
+    if (segundosRestantes > 0) {
+      const countdownEl = document.getElementById('countdown');
+      const btnLogin     = document.getElementById('btnLogin');
+      const btnLoginText = document.getElementById('btnLoginText');
+
+      btnLogin.disabled = true;
+      btnLogin.style.opacity = '0.55';
+      btnLogin.style.cursor = 'not-allowed';
+      btnLoginText.textContent = 'Bloqueado (' + formatoTiempo(segundosRestantes) + ')';
+      if (countdownEl) countdownEl.textContent = formatoTiempo(segundosRestantes);
+
+      const interval = setInterval(() => {
+        segundosRestantes--;
+        const texto = formatoTiempo(Math.max(segundosRestantes, 0));
+        if (countdownEl) countdownEl.textContent = texto;
+        btnLoginText.textContent = 'Bloqueado (' + texto + ')';
+
+        if (segundosRestantes <= 0) {
+          clearInterval(interval);
+          btnLogin.disabled = false;
+          btnLogin.style.opacity = '1';
+          btnLogin.style.cursor = 'pointer';
+          btnLoginText.textContent = 'Ingresar';
+          const alertsBox = document.querySelector('.login-alerts');
+          if (alertsBox) alertsBox.style.display = 'none';
+        }
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>

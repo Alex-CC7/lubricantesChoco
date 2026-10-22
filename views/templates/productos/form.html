@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% block title %}{{ accion }} Producto{% endblock %}
+{% block page_title %}<i class="bi bi-box-seam"></i> {{ accion }} Producto{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>{{ accion }} Producto</h2>
+  <a href="{{ url_for('productos.index') }}" class="btn-taller btn-secondary-t">
+    <i class="bi bi-arrow-left"></i> Volver
+  </a>
+</div>
+
+<div class="card-taller" style="max-width:900px">
+  <div class="card-header-taller">
+    <i class="bi bi-box-seam"></i> Formulario de Producto
+  </div>
+  <div style="padding:2rem 2.5rem">
+    <form method="POST" id="formProducto">
+
+      <!-- SECCIÓN 1: Producto -->
+      <div class="ft-section">
+        <div class="ft-section-title">
+          <i class="bi bi-tag"></i> Información del Producto
+        </div>
+        <div class="ft-row ft-col-2">
+          <div class="ft-group">
+            <label class="ft-label">Nombre del Producto</label>
+            <input type="text" name="nombre" class="ft-input"
+                   placeholder="Ej: Aceite de motor 20W-50"
+                   value="{{ producto.Nombre if producto else '' }}" required>
+          </div>
+          <div class="ft-group">
+            <label class="ft-label">Marca</label>
+            <input type="text" name="marca" class="ft-input"
+                   placeholder="Ej: Castrol"
+                   value="{{ producto.Marca if producto else '' }}" required>
+          </div>
+        </div>
+        <div class="ft-row ft-col-2">
+          <div class="ft-group">
+            <label class="ft-label">Stock</label>
+            <input type="text" name="stock" id="stockInput" class="ft-input"
+                   placeholder="Ej: 25"
+                   inputmode="numeric"
+                   value="{{ producto.Stock if producto else '' }}" required>
+            <small id="stockError" style="display:none;color:#dc2626;font-size:.78rem;margin-top:.3rem">
+              <i class="bi bi-exclamation-triangle-fill"></i> Solo se permiten números.
+            </small>
+          </div>
+          <div class="ft-group">
+            <label class="ft-label">Precio de Venta (Bs)</label>
+            <div class="ft-icon-wrap">
+              <span class="ft-icon" style="font-weight:700;font-size:.85rem;color:#64748b">Bs</span>
+              <input type="text" name="precio_venta" id="precioInput" class="ft-input"
+                     placeholder="0.00"
+                     inputmode="decimal"
+                     value="{{ producto.PrecioVenta if producto else '' }}" required>
+            </div>
+            <small id="precioError" style="display:none;color:#dc2626;font-size:.78rem;margin-top:.3rem">
+              <i class="bi bi-exclamation-triangle-fill"></i> Solo se permiten números (ej: 25.50).
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: Proveedor -->
+      <div class="ft-section">
+        <div class="ft-section-title">
+          <i class="bi bi-truck"></i> Datos del Proveedor
+        </div>
+        <div class="ft-row ft-col-2">
+          <div class="ft-group">
+            <label class="ft-label">Nombre del Proveedor</label>
+            <input type="text" name="nombre_proveedor" class="ft-input"
+                   placeholder="Ej: Distribuidora Norte"
+                   value="{{ producto.NombreProveedor if producto else '' }}" required>
+          </div>
+          <div class="ft-group">
+            <label class="ft-label">Teléfono del Proveedor</label>
+            <div class="ft-icon-wrap">
+              <i class="bi bi-telephone ft-icon"></i>
+              <input type="text" name="nro_proveedor" id="telProveedorInput" class="ft-input"
+                     placeholder="Ej: 70000000"
+                     maxlength="8"
+                     inputmode="numeric"
+                     value="{{ producto.NroProveedor if producto else '' }}" required>
+            </div>
+            <small id="telProveedorError" style="display:none;color:#dc2626;font-size:.78rem;margin-top:.3rem">
+              <i class="bi bi-exclamation-triangle-fill"></i> El teléfono debe tener 8 dígitos numéricos.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: Categoría -->
+      <div class="ft-section">
+        <div class="ft-section-title">
+          <i class="bi bi-tags"></i> Clasificación
+        </div>
+        <div class="ft-row ft-col-2">
+          <div class="ft-group">
+            <label class="ft-label">Categoría</label>
+            <select name="categoria_id" class="ft-select" required>
+              <option value="">-- Seleccionar categoría --</option>
+              {% for cat in categorias %}
+              <option value="{{ cat.idCategoria }}"
+                {{ 'selected' if producto and producto.Categoria_idCategoria == cat.idCategoria }}>
+                {{ cat.Nombre }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:1rem;margin-top:.5rem">
+        <button type="submit" class="btn-taller btn-primary-t btn-xl">
+          <i class="bi bi-save2"></i> Guardar Producto
+        </button>
+        <a href="{{ url_for('productos.index') }}" class="btn-taller btn-secondary-t btn-xl">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// --- Stock: solo números enteros ---
+document.getElementById('stockInput').addEventListener('input', function() {
+  const errorEl = document.getElementById('stockError');
+  this.value = this.value.replace(/[^0-9]/g, '');
+  errorEl.style.display = 'none';
+});
+
+// --- Precio de venta: solo números y un punto decimal ---
+document.getElementById('precioInput').addEventListener('input', function() {
+  const errorEl = document.getElementById('precioError');
+  // Permite dígitos y un solo punto decimal
+  this.value = this.value.replace(/[^0-9.]/g, '');
+  const partes = this.value.split('.');
+  if (partes.length > 2) {
+    this.value = partes[0] + '.' + partes.slice(1).join('');
+  }
+  errorEl.style.display = 'none';
+});
+
+// --- Teléfono del proveedor: solo números, máximo 8 dígitos ---
+document.getElementById('telProveedorInput').addEventListener('input', function() {
+  const errorEl = document.getElementById('telProveedorError');
+  this.value = this.value.replace(/[^0-9]/g, '');
+  if (this.value.length > 8) {
+    this.value = this.value.slice(0, 8);
+  }
+  errorEl.style.display = 'none';
+});
+
+// --- Validación final antes de enviar el formulario ---
+document.getElementById('formProducto').addEventListener('submit', function(e) {
+  let valido = true;
+
+  const stock = document.getElementById('stockInput');
+  const stockError = document.getElementById('stockError');
+  if (stock.value.trim().length === 0) {
+    stockError.style.display = 'block';
+    valido = false;
+  }
+
+  const precio = document.getElementById('precioInput');
+  const precioError = document.getElementById('precioError');
+  if (precio.value.trim().length === 0 || isNaN(parseFloat(precio.value))) {
+    precioError.style.display = 'block';
+    valido = false;
+  }
+
+  const tel = document.getElementById('telProveedorInput');
+  const telError = document.getElementById('telProveedorError');
+  if (tel.value.length !== 8) {
+    telError.style.display = 'block';
+    valido = false;
+  }
+
+  if (!valido) {
+    e.preventDefault();
+  }
+});
+</script>
+{% endblock %}

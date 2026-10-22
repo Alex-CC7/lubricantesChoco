@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block title %}Nueva Venta{% endblock %}
+{% block page_title %}<i class="bi bi-receipt"></i> Nueva Venta{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>Registrar Venta</h2>
+  <a href="{{ url_for('ventas.index') }}" class="btn-taller btn-secondary-t">
+    <i class="bi bi-arrow-left"></i> Volver
+  </a>
+</div>
+
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-cart-plus"></i> Datos de la Venta</div>
+  <div style="padding:2rem 2.5rem">
+    <form method="POST" id="formVenta">
+
+      <!-- Sección 1: General -->
+      <div class="ft-section">
+        <div class="ft-section-title"><i class="bi bi-calendar3"></i> Información General</div>
+        <div class="ft-row ft-col-3">
+          <div class="ft-group">
+            <label class="ft-label">Fecha Venta</label>
+            <input type="datetime-local" name="fecha_venta" class="ft-input" required>
+          </div>
+          <div class="ft-group">
+            <label class="ft-label">Tipo de Venta</label>
+            <select name="tipo_venta" class="ft-select" required>
+              <option value="1">💵 Efectivo</option>
+            </select>
+          </div>
+          <div class="ft-group">
+            <label class="ft-label">Descuento (Bs)</label>
+            <input type="text" name="descuento" id="descuento" class="ft-input" inputmode="decimal" value="0" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección 2: Cliente -->
+      <div class="ft-section">
+        <div class="ft-section-title"><i class="bi bi-person"></i> Cliente</div>
+        <div style="display:flex;gap:1rem;align-items:flex-end">
+          <div class="ft-group" style="flex:1;margin-bottom:0">
+            <label class="ft-label">Seleccionar Cliente</label>
+            <select name="cliente_id" id="clienteSelect" class="ft-select" required>
+              <option value="">-- Seleccionar cliente --</option>
+              {% for c in clientes %}
+              <option value="{{ c.idClientes }}">{{ c.RazonSocial }} — NIT/CI: {{ c['Nit/CI'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <a href="{{ url_for('clientes.crear') }}?next=venta" class="btn-taller btn-success-t btn-xl" style="margin-bottom:0">
+            <i class="bi bi-person-plus-fill"></i> Nuevo Cliente
+          </a>
+        </div>
+        <small style="color:#94a3b8;font-size:.8rem;margin-top:.4rem;display:block">
+          <i class="bi bi-info-circle"></i> Si el cliente no existe, haz clic en <strong>Nuevo Cliente</strong>.
+        </small>
+      </div>
+
+      <!-- Sección 3: Productos -->
+      <div class="ft-section">
+        <div class="ft-section-title" style="justify-content:space-between">
+          <span><i class="bi bi-cart"></i> Productos</span>
+          <button type="button" class="btn-taller btn-success-t" onclick="agregarFila()" style="font-size:.78rem;padding:.35rem .8rem">
+            <i class="bi bi-plus-circle"></i> Añadir fila
+          </button>
+        </div>
+
+        <!-- Encabezado columnas -->
+        <div style="display:grid;grid-template-columns:2fr 120px 140px 44px;gap:.75rem;margin-bottom:.4rem">
+          <span style="font-size:.78rem;font-weight:700;color:var(--azul-oscuro)">Producto</span>
+          <span style="font-size:.78rem;font-weight:700;color:var(--azul-oscuro)">Cantidad</span>
+          <span style="font-size:.78rem;font-weight:700;color:var(--azul-oscuro)">Precio Unit. (Bs)</span>
+          <span></span>
+        </div>
+
+        <div id="detalle-container">
+          <div class="detalle-fila" style="display:grid;grid-template-columns:2fr 120px 140px 44px;gap:.75rem;margin-bottom:.6rem;align-items:center">
+            <select name="producto_id[]" class="ft-select producto-select" required>
+              <option value="">-- Producto --</option>
+              {% for p in productos %}
+              <option value="{{ p.idProducto }}" data-precio="{{ p.PrecioVenta }}">
+                {{ p.Nombre }} ({{ p.Marca }}) — Bs {{ p.PrecioVenta }}
+              </option>
+              {% endfor %}
+            </select>
+            <input type="text" name="cantidad[]" class="ft-input cantidad-input" placeholder="0" inputmode="numeric" required>
+            <input type="text" name="precio[]" class="ft-input precio-input" placeholder="0.00" inputmode="decimal" readonly required>
+            <button type="button" class="btn-taller btn-danger-t" style="padding:.55rem;justify-content:center" onclick="quitarFila(this)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.5rem">
+        <div style="background:var(--azul-claro);border:2px solid var(--azul-oscuro);border-radius:10px;padding:1rem 1.5rem;min-width:260px">
+          <div style="font-size:.8rem;font-weight:700;color:var(--azul-oscuro);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">
+            Total a Pagar
+          </div>
+          <input type="number" step="0.01" name="total" id="total" class="ft-input" placeholder="0.00" required readonly
+                 style="font-size:1.5rem;font-weight:700;color:var(--azul-oscuro);border-color:var(--azul-oscuro);text-align:right">
+          <small style="color:#64748b;font-size:.78rem">Subtotal − descuento</small>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:1rem">
+        <button type="submit" class="btn-taller btn-primary-t btn-xl">
+          <i class="bi bi-save2"></i> Registrar Venta
+        </button>
+        <a href="{{ url_for('ventas.index') }}" class="btn-taller btn-secondary-t btn-xl">
+          <i class="bi bi-x-circle"></i> Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function calcularTotal() {
+  let sub = 0;
+  document.querySelectorAll('.detalle-fila').forEach(f => {
+    sub += (parseFloat(f.querySelector('.cantidad-input').value)||0)
+          *(parseFloat(f.querySelector('.precio-input').value)||0);
+  });
+  const desc = parseFloat(document.getElementById('descuento').value)||0;
+  document.getElementById('total').value = Math.max(0, sub - desc).toFixed(2);
+}
+
+// --- Limita un input a números positivos, permitiendo un solo punto decimal si se indica ---
+function limitarNumeroPositivo(input, decimales) {
+  input.addEventListener('input', function() {
+    if (decimales) {
+      this.value = this.value.replace(/[^0-9.]/g, '');
+      const partes = this.value.split('.');
+      if (partes.length > 2) {
+        this.value = partes[0] + '.' + partes.slice(1).join('');
+      }
+    } else {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    }
+    calcularTotal();
+  });
+}
+
+function bindFila(fila) {
+  limitarNumeroPositivo(fila.querySelector('.cantidad-input'), false);
+  limitarNumeroPositivo(fila.querySelector('.precio-input'), true);
+  fila.querySelector('.producto-select').addEventListener('change', function(){
+    fila.querySelector('.precio-input').value = this.options[this.selectedIndex].dataset.precio||'';
+    calcularTotal();
+  });
+}
+
+function agregarFila() {
+  const container = document.getElementById('detalle-container');
+  const nueva = container.querySelector('.detalle-fila').cloneNode(true);
+  nueva.querySelector('.producto-select').value = '';
+  nueva.querySelector('.cantidad-input').value  = '';
+  nueva.querySelector('.precio-input').value    = '';
+  nueva.querySelector('button').onclick = () => quitarFila(nueva);
+  bindFila(nueva);
+  container.appendChild(nueva);
+}
+function quitarFila(btn) {
+  const fila  = btn.closest ? btn.closest('.detalle-fila') : btn;
+  if (document.querySelectorAll('.detalle-fila').length > 1) { fila.remove(); calcularTotal(); }
+}
+
+document.querySelectorAll('.detalle-fila').forEach(bindFila);
+limitarNumeroPositivo(document.getElementById('descuento'), true);
+
+// Si volvió de registrar cliente
+if (new URLSearchParams(location.search).get('cliente_nuevo')) {
+  const sel = document.getElementById('clienteSelect');
+  sel.selectedIndex = sel.options.length - 1;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BD Taller - Nueva contraseña</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+  <form class="login-card" method="POST" action="{{ url_for('auth.recuperar_nueva') }}">
+
+    <div class="avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+      </svg>
+    </div>
+
+    <h1 class="title">Nueva contraseña</h1>
+    <p class="subtitle">Hola, {{ nombre }}. Elige tu nueva contraseña</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="login-alerts">
+          {% for category, message in messages %}
+            <div class="login-alert login-alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="field">
+      <div class="field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+        Nueva contraseña
+      </div>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+        </span>
+        <input id="pwd1" type="password" name="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        <button type="button" class="toggle-eye" onclick="togglePwd('pwd1','eyeSlash1')" aria-label="Mostrar/ocultar contraseña">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+            <line id="eyeSlash1" x1="3" y1="21" x2="21" y2="3" style="display:none"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+        Confirmar contraseña
+      </div>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+          </svg>
+        </span>
+        <input id="pwd2" type="password" name="password2" placeholder="Repite la contraseña" minlength="6" required>
+        <button type="button" class="toggle-eye" onclick="togglePwd('pwd2','eyeSlash2')" aria-label="Mostrar/ocultar contraseña">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+            <line id="eyeSlash2" x1="3" y1="21" x2="21" y2="3" style="display:none"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-login">
+      <span class="btn-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12h12"></path>
+          <path d="M15 6l6 6-6 6"></path>
+          <path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"></path>
+        </svg>
+      </span>
+      Cambiar contraseña
+    </button>
+
+  </form>
+
+  <script>
+    function togglePwd(inputId, slashId){
+      const input = document.getElementById(inputId);
+      const slash = document.getElementById(slashId);
+      const isPwd = input.type === 'password';
+      input.type = isPwd ? 'text' : 'password';
+      slash.style.display = isPwd ? 'none' : 'block';
+    }
+  </script>
+
+</body>
+</html>

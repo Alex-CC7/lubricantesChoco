@@ -1,0 +1,44 @@
+{% from 'macros.html' import buscador %}
+{% extends 'base.html' %}
+{% block title %}Productos{% endblock %}
+{% block page_title %}<i class="bi bi-box-seam"></i> Productos{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2><i class="bi bi-box-seam"></i> Productos</h2>
+  <div style="display:flex;gap:.5rem">
+    <a href="{{ url_for('reportes.excel_productos') }}" class="btn-taller btn-excel-t"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+    <a href="{{ url_for('reportes.pdf_productos') }}"   class="btn-taller btn-pdf-t"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+    <a href="{{ url_for('productos.crear') }}"          class="btn-taller btn-primary-t"><i class="bi bi-plus-circle"></i> Nuevo</a>
+  </div>
+</div>
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-list-ul"></i> Listado de Productos</div>
+  <div style="padding:1rem 1.2rem .5rem">
+    {{ buscador('tbl_productos', 'Buscar producto, marca, categoría...') }}
+  </div>
+  <div style="padding:0 1rem 1rem;overflow-x:auto">
+    <table class="table-taller" id="tbl_productos">
+      <thead><tr><th>Nº</th><th>Nombre</th><th>Marca</th><th>Stock</th><th>Precio</th><th>Proveedor</th><th>Categoría</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for i, p in productos | enumerate(1) | list %}
+        <tr>
+          <td class="num">{{ i }}</td>
+          <td>{{ p.Nombre }}</td>
+          <td>{{ p.Marca }}</td>
+          <td>{{ p.Stock }}</td>
+          <td>Bs {{ p.PrecioVenta }}</td>
+          <td>{{ p.NombreProveedor }}</td>
+          <td>{{ p.Categoria }}</td>
+          <td><div class="acciones-fila">
+            <a href="{{ url_for('productos.editar', id=p.idProducto) }}" class="btn-taller btn-warning-t"><i class="bi bi-pencil"></i> Editar</a>
+            <a href="{{ url_for('productos.eliminar', id=p.idProducto) }}" class="btn-taller btn-danger-t" onclick="return confirm('¿Eliminar?')"><i class="bi bi-trash"></i> Eliminar</a>
+          </div></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;padding:1.5rem;color:#94a3b8">Sin productos registrados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

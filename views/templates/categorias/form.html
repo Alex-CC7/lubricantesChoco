@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ accion }} Categoría{% endblock %}
+{% block page_title %}<i class="bi bi-tags"></i> {{ accion }} Categoría{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h2>{{ accion }} Categoría</h2>
+  <a href="{{ url_for('categorias.index') }}" class="btn-taller btn-secondary-t">
+    <i class="bi bi-arrow-left"></i> Volver
+  </a>
+</div>
+
+<div class="card-taller" style="max-width:560px">
+  <div class="card-header-taller"><i class="bi bi-tag"></i> Datos de la Categoría</div>
+  <div class="p-4">
+    <form method="POST" class="form-taller">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" class="form-control"
+               value="{{ categoria.Nombre if categoria else '' }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción</label>
+        <input type="text" name="descripcion" class="form-control"
+               value="{{ categoria.Descripcion if categoria else '' }}" required>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn-taller btn-primary-t">
+          <i class="bi bi-save"></i> Guardar
+        </button>
+        <a href="{{ url_for('categorias.index') }}" class="btn-taller btn-secondary-t">
+          <i class="bi bi-x"></i> Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

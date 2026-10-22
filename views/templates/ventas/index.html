@@ -1,0 +1,45 @@
+{% from 'macros.html' import buscador %}
+{% extends 'base.html' %}
+{% block title %}Ventas{% endblock %}
+{% block page_title %}<i class="bi bi-receipt"></i> Ventas{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2><i class="bi bi-receipt"></i> Ventas</h2>
+  <div style="display:flex;gap:.5rem">
+    <a href="{{ url_for('reportes.reporte_ventas') }}" class="btn-taller btn-info-t"><i class="bi bi-funnel"></i> Filtrar</a>
+    <a href="{{ url_for('ventas.crear') }}"            class="btn-taller btn-primary-t"><i class="bi bi-plus-circle"></i> Nueva Venta</a>
+  </div>
+</div>
+<div class="card-taller">
+  <div class="card-header-taller"><i class="bi bi-list-ul"></i> Listado de Ventas</div>
+  <div style="padding:1rem 1.2rem .5rem">
+    {{ buscador('tbl_ventas', 'Buscar por cliente, vendedor, tipo...') }}
+  </div>
+  <div style="padding:0 1rem 1rem;overflow-x:auto">
+    <table class="table-taller" id="tbl_ventas">
+      <thead></th><th>N°</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Descuento</th><th>Tipo</th><th>Vendedor</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for i, v in ventas | enumerate(1) | list %}
+        <tr>
+          <td class="num">{{ i }}</td>
+          
+          <td>{{ v.FechaVenta }}</td>
+          <td>{{ v.Cliente }}</td>
+          <td>Bs {{ v.TotalPagar }}</td>
+          <td>Bs {{ v.Descuento }}</td>
+          <td>{{ 'Contado' if v.TipoVenta == 1 else 'Crédito' }}</td>
+          <td>{{ v.Usuario }}</td>
+          <td><div class="acciones-fila">
+            <a href="{{ url_for('ventas.detalle', id=v.idVenta) }}"      class="btn-taller btn-info-t"><i class="bi bi-eye"></i> Ver</a>
+            <a href="{{ url_for('ventas.imprimir_pdf', id=v.idVenta) }}" class="btn-taller btn-pdf-t" target="_blank"><i class="bi bi-file-pdf"></i> PDF</a>
+            <a href="{{ url_for('ventas.eliminar', id=v.idVenta) }}"     class="btn-taller btn-danger-t" onclick="return confirm('¿Anular esta venta?')"><i class="bi bi-x-circle"></i> Anular</a>
+          </div></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" style="text-align:center;padding:1.5rem;color:#94a3b8">Sin ventas registradas</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

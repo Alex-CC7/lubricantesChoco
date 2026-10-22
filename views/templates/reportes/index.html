@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Reportes{% endblock %}
+{% block page_title %}<i class="bi bi-bar-chart"></i> Reportes{% endblock %}
+
+{% block content %}
+<h2 class="mb-4" style="color:var(--azul-oscuro)">Centro de Reportes</h2>
+<div class="dash-grid">
+  <div class="dash-card" style="border-left-color:#10b981">
+    <div class="dc-icon"><i class="bi bi-receipt"></i></div>
+    <div class="dc-label">Reporte de Ventas</div>
+    <a href="{{ url_for('reportes.reporte_ventas') }}" class="btn-taller btn-success-t mt-2">
+      <i class="bi bi-arrow-right"></i> Generar
+    </a>
+  </div>
+  <div class="dash-card" style="border-left-color:#0ea5e9">
+    <div class="dc-icon"><i class="bi bi-box-seam"></i></div>
+    <div class="dc-label">Reporte de Productos</div>
+    <a href="{{ url_for('reportes.reporte_productos') }}" class="btn-taller btn-info-t mt-2">
+      <i class="bi bi-arrow-right"></i> Generar
+    </a>
+  </div>
+</div>
+{% endblock %}
